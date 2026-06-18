@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 40% 97%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* 🔵 Logo Royal Blue */
+    --primary: 221 45% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* 🟡 Logo Gold */
+    --accent: 45 65% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    /* 🔴 Logo Red */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --secondary: 220 30% 92%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 220 30% 94%;
+    --muted-foreground: 220 9% 46%;
+
+    --border: 220 20% 85%;
+    --input: 220 20% 85%;
+    --ring: 221 45% 45%;
+
+    --radius: 1.25rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+/* ===== BRAND UTILITIES ===== */
+
+@layer utilities {
+
+  .brand-header {
+    background: linear-gradient(135deg, #3E5FA8, #2F4B87);
+  }
+
+  .brand-section {
+    background: linear-gradient(135deg, #F4F6FA, #E9EEF8);
+  }
+
+  .brand-card {
+    background: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 16px 40px rgba(0,0,0,.12);
+  }
+
+  .brand-button {
+    background: linear-gradient(135deg, #3E5FA8, #2F4B87);
+    color: white;
+    font-weight: 600;
+    transition: all .25s ease;
+  }
+
+  .brand-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(62,95,168,.45);
+  }
+
+  .brand-button-gold {
+    background: linear-gradient(135deg, #C9A227, #A8871D);
+    color: white;
+  }
+
+  .brand-button-red {
+    background: linear-gradient(135deg, #E52D2D, #B91C1C);
+    color: white;
+  }
+  .animate-dropdown {
+    animation: dropdown .18s ease-out;
+  }
+  
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInPage 0.5s ease-out forwards;
+}
+
+@keyframes tabFadeScale {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-tab {
+  animation: tabFadeScale 0.35s ease;
+}
+@keyframes tooltip {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* Chrome, Safari, Edge */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: auto;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: number-input;
+}
