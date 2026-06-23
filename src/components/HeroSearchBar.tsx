@@ -171,12 +171,12 @@ const HeroSearchBar = ({ activeCategory }: HeroSearchBarProps) => {
 
 
     <form
-      onSubmit={handleSearch}
-      className="w-full ml-60 max-w-[1090px] rounded-[10px] border-[6px] border-[#1f2a44] bg-[#1f2a44] p-[2px]"
-    >
+  onSubmit={handleSearch}
+  className="w-full rounded-[10px] border-[6px] border-[#1f2a44] bg-[#1f2a44] p-[4px]"
+>
       {/* TITLE BAR */}
       <div className="bg-[#A2D4F1] text-center rounded-[4px] text-[#2b2b8a] font-bold py-1 text-sm uppercase tracking-wider mb-[2px]">
-        TELANGANA
+        Search Here
       </div>
 
       {/* MAIN GRID - 6 Columns */}

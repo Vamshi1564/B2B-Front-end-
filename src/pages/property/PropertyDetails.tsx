@@ -266,6 +266,21 @@ const PropertyDetails = () => {
     fetchProperty();
   }, [id]);
 
+const policiesData = Array.isArray(data?.policies)
+  ? data.policies[0] || {}
+  : data?.policies || {};
+
+// Fetch only remarks from DB
+const bookingRemarks =
+  policiesData.hotel_remarks ||
+  policiesData.booking_policy ||
+  "-";
+
+const cancellationRemarks =
+  policiesData.terms ||
+  policiesData.cancellation_policy ||
+  "-";
+
   // ✅ Fetch states
   useEffect(() => {
     fetch(`${API_URL}/api/states`)
@@ -419,10 +434,10 @@ const PropertyDetails = () => {
 
 </div> */}
 
-      <main className="flex-1 container mx-auto px-6 py-2">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <main className="flex-1 container mx-auto px-2 py-2">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
           {/* ================= SIDEBAR ================= */}
-          <div className="lg:col-span-1 hidden lg:flex justify-start -ml-6">
+          <div className="lg:col-span-1 hidden lg:flex justify-start">
             <div className="w-[280px] mt-12 sm:mt-16 md:mt-24 lg:mt-32 xl:mt-40">
               <PropertySelectionSidebar
                 categories={categories}
@@ -459,18 +474,20 @@ const PropertyDetails = () => {
             </div>
             {/* Title Bar */}
             <div className="w-[109%] -ml-[5%] bg-yellow-400 text-center font-medium py-1 mt-1">
-              Name of the State:{" "}
-              {data?.property?.state_name || data?.property?.state_name || "-"}
-            </div>
+  Name of the State:
+  <span className="ml-2 px-3 py-1 bg-blue-900 text-white font-bold rounded-md text-lg shadow-sm">
+    {data?.property?.state || "-"}
+  </span>
+</div>
             {/* HERO SEARCH BAR */}
             <motion.section
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="pt-1 pb-1 ml-0 lg:ml-[-29%]"
-            >
-              <HeroSearchBar activeCategory={activeCategory} />
-            </motion.section>
+  initial={{ opacity: 0, y: 30 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+  className="pt-1 pb-1 w-[109%] -ml-[5%]"
+>
+  <HeroSearchBar activeCategory={activeCategory} />
+</motion.section>
 
             <div>
               {/* {data?.images?.length > 0 && (
@@ -572,52 +589,22 @@ const PropertyDetails = () => {
                     <div className="bg-[#0c2d67] p-2 rounded-2xl">
                       <div className="bg-[#b9d3ea] p-2 rounded-2xl">
                         <div className="bg-[#FFE1E1] rounded-[14px] p-4 border border-[#0b2c6f]/20">
-                          <div className="flex flex-col xl:flex-row xl:justify-between gap-4">
-                            {/* LEFT CONTENT */}
+                          {/* <div className="flex flex-col xl:flex-row xl:justify-between gap-4">
                             <div className="space-y-3 max-w-3xl">
-                              <h1
-                                className="text-3xl lg:text-4xl font-bold leading-tight
-                bg-gradient-to-r from-[#A72703] to-[#D43C1C]
-                bg-clip-text text-transparent"
-                              >
-                                {data?.property?.name}
-                              </h1>
+                             
 
-                              <div className="flex items-start gap-2">
-                                {/* <MapPin className="w-4 h-4 mt-1 text-black" /> */}
+                              <div className="flex items-start">
                                 <div>
-                                  {/* <p className="font-medium text-black text-sm">
-                                    {data?.property?.area},{" "}
-                                    {data?.property?.city} –{" "}
-                                    {data?.property?.pincode}
-                                  </p>
-                                  <p className="text-xs text-gray-700 mt-0.5">
-                                    {data?.property?.address}
-                                  </p> */}
-                                  <p className="text-xs text-gray-700 mt-0.5">
+                                  <p className="text-base text-gray-700 mt-1 text-justify leading-relaxed">
                                     {data?.property?.full_overview}
-                                  </p>
+                                  </p>  
                                 </div>
                               </div>
 
-                              {/* <div className="flex gap-2 flex-wrap">
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-black/10">
-                                  <Tag className="w-3.5 h-3.5" />
-                                  <span className="text-[10px] font-semibold uppercase">
-                                    {data?.property?.category}
-                                  </span>
-                                </div>
-
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-black/10">
-                                  <Bed className="w-3.5 h-3.5" />
-                                  <span className="text-[10px] font-semibold uppercase">
-                                    {data?.property?.total_rooms ?? 0} Rooms
-                                  </span>
-                                </div>
-                              </div> */}
+                            
                             </div>
 
-                            {/* RIGHT CTA */}
+                            RIGHT CTA
                             <div className="flex flex-col items-start xl:items-end gap-2">
                               {isAgent && !isActiveAgent && (
                                 <Button
@@ -628,7 +615,14 @@ const PropertyDetails = () => {
                                 </Button>
                               )}
                             </div>
-                          </div>
+                            
+                          </div> */}
+
+                          <div className="w-full">
+  <p className="text-base md:text-lg text-gray-700 text-justify leading-relaxed">
+    {data?.property?.full_overview}
+  </p>
+</div>
                         </div>
                       </div>
                     </div>
@@ -642,32 +636,23 @@ const PropertyDetails = () => {
 
                     {/* 🔷 AMENITIES CONTAINER */}
                     <div className="bg-[#0c2d67] p-2 rounded-2xl">
-                      <div className="bg-[#b9d3ea] p-2 rounded-2xl">
-                        <div className="bg-[#FFE1E1] rounded-[14px] p-4 border border-[#0b2c6f]/20">
-                          {data?.amenities?.length > 0 && (
-                            <div className="bg-[#7fd8dc] border border-black rounded-[10px] p-3 flex flex-wrap gap-3">
-                              {data.amenities.map((a: any) => {
-                                const name = a.amenity_name
-                                  ?.toLowerCase()
-                                  .trim();
-                                const Icon =
-                                  amenityIcons[name] || ConciergeBell;
-
-                                return (
-                                  <div
-                                    key={a.id}
-                                    className="flex items-center gap-2 px-3 py-1 bg-primary rounded-[5px] text-white text-xs w-fit whitespace-nowrap"
-                                  >
-                                    <Icon size={14} />
-                                    {a.amenity_name}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+  <div className="bg-[#b9d3ea] p-2 rounded-2xl">
+    <div className="bg-[#FFE1E1] rounded-[14px] p-4 border border-[#0b2c6f]/20">
+      {data?.amenities?.length > 0 && (
+        <div className="bg-[#7fd8dc] border border-[#2d4f6c] rounded-[10px] p-4 flex flex-wrap gap-3">
+          {data.amenities.map((amenity: string, index: number) => (
+            <div
+              key={index}
+              className="px-5 py-2 bg-[#f7e5e5] border border-[#6b7280] rounded-xl text-black text-sm font-medium"
+            >
+              {amenity}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
                   </div>
                 )}
 
@@ -928,129 +913,125 @@ const PropertyDetails = () => {
 
                       {/* ACTIVE TAB LABEL */}
                       <div className="mb-3 font-semibold text-[#0c2d67]">
-                        {RATE_TABS[activeRateTab]}
-                      </div>
+  {RATE_TABS[activeRateTab]}
+</div>
 
-                      {/* ROOMS */}
-                      {data?.rooms?.map((room: any) => {
-                        const roomRates =
-                          data?.rates?.filter(
-                            (r: any) =>
-                              r.room_id === room.id &&
-                              normalizeType(r.rate_type) === "weekday",
-                          ) || [];
+<div className="overflow-x-auto">
+  <table className="w-full border-collapse">
+    <thead>
+      <tr className="bg-[#0c2d67] text-white text-center text-xs font-semibold">
+        <th className="border border-white p-2">Room Category</th>
+        <th className="border border-white p-2">Rooms</th>
+        <th className="border border-white p-2">EP</th>
+        <th className="border border-white p-2">CPAI</th>
+        <th className="border border-white p-2">MAPAI</th>
+        <th className="border border-white p-2">APAI</th>
+        <th className="border border-white p-2">Ex Adult</th>
+        <th className="border border-white p-2">Chd with Bed</th>
+        <th className="border border-white p-2">Chd no Bed</th>
+      </tr>
+    </thead>
 
-                        // ✅ helper
-                        const getRate = (plan: string) =>
-                          roomRates.find(
-                            (r: any) =>
-                              normalizePlan(r.plan) === normalizePlan(plan),
-                          ) || {};
+    <tbody>
+      {data?.rooms?.map((room: any) => {
+        const selectedRateType =
+          activeRateTab === 0
+            ? "weekday"
+            : activeRateTab === 1
+            ? "public_holiday"
+            : activeRateTab === 2
+            ? "festival"
+            : "banquet";
 
-                        return (
-                          <div
-                            key={room.id}
-                            className="mb-6 border border-black p-3 rounded-lg"
-                          >
-                            {/* ROOM HEADER */}
-                            <div className="bg-[#0c2d67] text-white p-2 text-sm font-semibold mb-2 rounded-xl">
-                              {room.type} - Max {room.max_adults} Adults,{" "}
-                              {room.max_children} Children
-                            </div>
+        const roomRates =
+          data?.rates?.filter(
+            (r: any) =>
+              r.room_id === room.id &&
+              r.rate_type === selectedRateType
+          ) || [];
 
-                            {/* DATES */}
-                            <div className="flex items-center gap-2 mb-3 w-fit">
-                              <div className="bg-orange-600 px-3 py-1 text-white border border-black text-xs">
-                                Valid From
-                              </div>
-                              <div className="bg-[#e6c0b8] border border-black px-2 py-1 w-[130px] text-xs">
-                                {formatDate(room.valid_from) || "-"}
-                              </div>
+        // Skip rows with no rates for current tab
+        if (roomRates.length === 0) return null;
 
-                              <div className="bg-orange-600 px-3 py-1 text-white border border-black text-xs">
-                                Valid Till
-                              </div>
-                              <div className="bg-[#e6c0b8] border border-black px-2 py-1 w-[130px] text-xs">
-                                {formatDate(room.valid_to) || "-"}
-                              </div>
-                            </div>
+        const getRate = (plan: string) =>
+          roomRates.find(
+            (r: any) =>
+              normalizePlan(r.plan) === normalizePlan(plan)
+          ) || {};
 
-                            {/* HEADER */}
-                            <div className="grid grid-cols-[2fr_1fr_0.7fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-[#0c2d67] text-white text-center text-xs font-semibold">
-                              {[
-                                "Room Category",
-                                "Rooms",
-                                "EP",
-                                "CPAI",
-                                "MAPAI",
-                                "APAI",
-                                "Ex Adult",
-                                "Chd with Bed",
-                                "Chd no Bed",
-                              ].map((h) => (
-                                <div
-                                  key={h}
-                                  className="p-2 border border-white"
-                                >
-                                  {h}
-                                </div>
-                              ))}
-                            </div>
+        const ep = getRate("EP");
 
-                            {/* ROWS */}
-                            {(() => {
-                              const ep = getRate("EP");
+        return (
+          <tr
+            key={`${room.id}-${selectedRateType}`}
+            className="bg-[#66FFFF] text-center text-xs"
+          >
+            <td className="border border-white p-2">
+              {room.type}
+            </td>
 
-                              return (
-                                <div className="grid grid-cols-[2fr_1fr_0.7fr_1fr_1fr_1fr_1fr_1fr_1fr] bg-[#66FFFF] text-center text-xs border-b border-white">
-                                  <div className="p-2 border border-white">
-                                    {room.type}
-                                  </div>
+            <td className="border border-white p-2">
+              {room.rooms_count}
+            </td>
 
-                                  <div className="p-2 border border-white">
-                                    {room.rooms || 1}
-                                  </div>
+            <td className="border border-white p-2">
+              ₹{ep.base_price ?? "-"}
+            </td>
 
-                                  <div className="p-2 border border-white">
-                                    ₹{ep.base_price ?? "-"}
-                                  </div>
+            <td className="border border-white p-2">
+              ₹{getRate("CP").base_price ?? "-"}
+            </td>
 
-                                  <div className="p-2 border border-white">
-                                    ₹{getRate("CP").base_price ?? "-"}
-                                  </div>
+            <td className="border border-white p-2">
+              ₹{getRate("MAP").base_price ?? "-"}
+            </td>
 
-                                  <div className="p-2 border border-white">
-                                    ₹{getRate("MAP").base_price ?? "-"}
-                                  </div>
+            <td className="border border-white p-2">
+              ₹{getRate("AP").base_price ?? "-"}
+            </td>
 
-                                  <div className="p-2 border border-white">
-                                    ₹{getRate("AP").base_price ?? "-"}
-                                  </div>
+            <td className="border border-white p-2">
+              ₹{ep.extra_adult_price ?? 0}
+            </td>
 
-                                  <div className="p-2 border border-white">
-                                    ₹{ep.extra_adult_price ?? 0}
-                                  </div>
+            <td className="border border-white p-2">
+              ₹{ep.child_with_bed_price ?? 0}
+            </td>
 
-                                  <div className="p-2 border border-white">
-                                    ₹{ep.child_with_bed_price ?? 0}
-                                  </div>
+            <td className="border border-white p-2">
+              ₹{ep.child_without_bed_price ?? 0}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
 
-                                  <div className="p-2 border border-white">
-                                    ₹{ep.child_without_bed_price ?? 0}
-                                  </div>
-                                </div>
-                              );
-                            })()}
+{/* No Data Message */}
+{data?.rooms?.every((room: any) => {
+  console.log("Room Data:", room);
+  const selectedRateType =
+    activeRateTab === 0
+      ? "weekday"
+      : activeRateTab === 1
+      ? "public_holiday"
+      : activeRateTab === 2
+      ? "festival"
+      : "banquet";
 
-                            {/* EMPTY MESSAGE */}
-                            {roomRates.length === 0 && (
-                              <div className="text-center text-red-500 py-2 text-xs">
-                                No rates available for this category
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+  return !data?.rates?.some(
+    (r: any) =>
+      r.room_id === room.id &&
+      r.rate_type === selectedRateType
+  );
+}) && (
+  <div className="text-center text-red-500 py-4">
+    No rates available for this category
+  </div>
+)}
+
+
 
                       {/* BOTTOM SECTION */}
                       <div className="flex mt-4 items-start gap-2 text-xs">
@@ -1124,181 +1105,175 @@ const PropertyDetails = () => {
                           {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">  */}
                           <div className="grid grid-cols-1 gap-4">
                             {filteredStaff.map((s: any) => {
-                              const phones = Array.isArray(s.phones)
-                                ? s.phones
-                                : JSON.parse(s.phones || "[]");
+                              console.log("Staff Photo:", s.photo);
+  const phones = Array.isArray(s.phones)
+    ? s.phones
+    : (() => {
+        try {
+          return JSON.parse(s.phones || "[]");
+        } catch {
+          return [];
+        }
+      })();
 
-                              const activeFields = s.active_fields
-                                ? typeof s.active_fields === "string"
-                                  ? JSON.parse(s.active_fields)
-                                  : s.active_fields
-                                : {};
+  const emails = Array.isArray(s.emails)
+    ? s.emails
+    : (() => {
+        try {
+          return JSON.parse(s.emails || "[]");
+        } catch {
+          return [];
+        }
+      })();
 
-                              const emails = Array.isArray(s.emails)
-                                ? s.emails
-                                : JSON.parse(s.emails || "[]");
+  const activeFields =
+    typeof s.active_fields === "string"
+      ? (() => {
+          try {
+            return JSON.parse(s.active_fields);
+          } catch {
+            return {};
+          }
+        })()
+      : s.active_fields || {};
 
-                              // ✅ Visibility logic
-                              const phone1 =
-                                s.show_phones || isSupplier
-                                  ? phones[0] || ""
-                                  : "Hidden";
+  const phone1 =
+    s.show_phones || isSupplier
+      ? phones?.[0] || s.mobile || "-"
+      : "Hidden";
 
-                              const phone2 =
-                                s.show_phones || isSupplier
-                                  ? phones[1] || ""
-                                  : "Hidden";
+  const phone2 =
+    s.show_phones || isSupplier
+      ? phones?.[1] || "-"
+      : "Hidden";
 
-                              const email1 =
-                                s.show_emails || isSupplier
-                                  ? emails[0] || ""
-                                  : "Hidden";
+  const email1 =
+    s.show_emails || isSupplier
+      ? emails?.[0] || s.email || "-"
+      : "Hidden";
 
-                              const email2 =
-                                s.show_emails || isSupplier
-                                  ? emails[1] || ""
-                                  : "Hidden";
+  const email2 =
+    s.show_emails || isSupplier
+      ? emails?.[1] || "-"
+      : "Hidden";
 
-                              return (
-                                <div
-                                  key={s.id}
-                                  className="p-3 rounded-[10px] flex gap-4"
-                                >
-                                  {/* PHOTO SECTION */}
-                                  <div className="w-[230px] h-[310px] bg-gray-100 flex items-center justify-center rounded-[8px] overflow-hidden border border-gray-300 flex-shrink-0">
-                                    {s.photo && (s.show_photo || isSupplier) ? (
-                                      <img
-                                        src={`${API_URL}/uploads/${s.photo}`}
-                                        className="w-full h-full object-cover"
-                                        alt={s.name}
-                                      />
-                                    ) : (
-                                      <span className="text-gray-400 text-sm">
-                                        No Photo
-                                      </span>
-                                    )}
-                                  </div>
+  const details = [
+    // {
+    //   label: "Name",
+    //   value: activeFields.name ? s.name : "Hidden",
+    // },
 
-                                  {/* DETAILS SECTION */}
-                                  <div className="flex-1 space-y-2">
-                                    {/* NAME ROW */}
-                                    {/* <div className="flex gap-2">
-                                      <div className="w-[110px] bg-[#0c2d67] text-white px-3 py-1 h-[32px] flex items-center rounded-[7px] text-md">
-                                        Name
-                                      </div>
-                                      <input
-                                        value={s.name || ""}
-                                        readOnly
-                                        className="flex-1 bg-white px-2 h-[32px] rounded-[7px] border border-gray-300 text-sm"
-                                      />
-                                      <input
-                                        value={s.surname || ""}
-                                        readOnly
-                                        className="flex-1 bg-white px-2 h-[32px] rounded-[7px] border border-gray-300 text-sm"
-                                      />
-                                    </div> */}
+    {
+  label: "Name",
+  value: s.name || "-",
+},
+    {
+      label: "Designation",
+      value: activeFields.post ? s.designation : "Hidden",
+    },
+    {
+      label: "Mobile 1",
+      value: activeFields.cell1 ? phone1 : "Hidden",
+    },
+    {
+      label: "Mobile 2",
+      value: activeFields.cell2 ? phone2 : "Hidden",
+    },
+    {
+      label: "Landmark",
+      value: activeFields.landmark ? s.landmark : "Hidden",
+    },
+    {
+      label: "Email 1",
+      value: activeFields.email1 ? email1 : "Hidden",
+    },
+    {
+      label: "Email 2",
+      value: activeFields.email2 ? email2 : "Hidden",
+    },
+  ];
 
-                                    <div className="flex gap-2">
-                                      {/* Reservation Type */}
-                                      <div className="w-[150px] bg-[#0c2d67] text-white px-2 py-1 h-[32px] flex items-center rounded-[7px] text-sm">
-                                        Reservation Type
-                                      </div>
-                                      <input
-                                        value={s.reservation_type || "-"}
-                                        readOnly
-                                        className="flex-1 bg-white px-2 h-[32px] rounded-[7px] border border-gray-300 text-sm"
-                                      />
+  return (
+    <div
+      key={s.id}
+      className="p-3 rounded-[10px] flex gap-4"
+    >
+      {/* PHOTO */}
+      <div className="w-[230px] h-[310px] bg-gray-100 rounded-[8px] overflow-hidden border border-gray-300 flex-shrink-0">
+        {s.photo && (s.show_photo || isSupplier) ? (
+          <img
+            src={`${API_URL}/uploads/${s.photo}`}
+            alt={s.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+            No Photo
+          </div>
+        )}
+      </div>
 
-                                      {/* City */}
-                                      <div className="w-[80px] bg-[#0c2d67] text-white px-2 py-1 h-[32px] flex items-center rounded-[7px] text-sm">
-                                        City
-                                      </div>
-                                      <input
-                                        value={s.city || "-"}
-                                        readOnly
-                                        className="flex-1 bg-white px-2 h-[32px] rounded-[7px] border border-gray-300 text-sm"
-                                      />
-                                    </div>
+      {/* DETAILS */}
+      {/* DETAILS */}
+<div className="flex-1 space-y-2">
 
-                                    {[
-                                      {
-                                        label: "Post",
-                                        value: activeFields.post
-                                          ? s.designation
-                                          : "Hidden",
-                                      },
-                                      {
-                                        label: "Cell 1",
-                                        value: activeFields.cell1
-                                          ? phone1
-                                          : "Hidden",
-                                      },
-                                      {
-                                        label: "Cell 2",
-                                        value: activeFields.cell2
-                                          ? phone2
-                                          : "Hidden",
-                                      },
-                                      {
-                                        label: "Landmark",
-                                        value: activeFields.landmark
-                                          ? s.landmark
-                                          : "Hidden",
-                                      },
-                                      {
-                                        label: "Email 1",
-                                        value: activeFields.email1
-                                          ? email1
-                                          : "Hidden",
-                                      },
-                                      {
-                                        label: "Email 2",
-                                        value: activeFields.email2
-                                          ? email2
-                                          : "Hidden",
-                                      },
-                                    ].map((item, i) => (
-                                      <div key={i} className="flex gap-2">
-                                        <div className="w-[110px] bg-[#0b2c6f] text-white px-2 h-[32px] flex items-center rounded-[7px] text-sm">
-                                          {item.label}
-                                        </div>
-                                        <input
-                                          value={item.value}
-                                          readOnly
-                                          className="flex-1 bg-white px-2 h-[32px] rounded-[7px] border border-gray-300 text-sm"
-                                        />
-                                      </div>
-                                    ))}
+  {/* Top Row */}
+  <div className="grid grid-cols-4 gap-2">
+    <div className="bg-[#0c2d67] text-white px-3 py-2 rounded-[7px] text-sm">
+      Reservation Type
+    </div>
 
-                                    {/* LANDLINE + EXTENSION */}
-                                    <div className="flex gap-2">
-                                      <div className="w-[110px] bg-[#0b2c6f] text-white px-2 h-[32px] flex items-center rounded-[7px] text-sm">
-                                        Landline
-                                      </div>
-                                      <input
-                                        value={
-                                          s.show_phones || isSupplier
-                                            ? s.alternate_mobile || ""
-                                            : "Hidden"
-                                        }
-                                        readOnly
-                                        className="flex-1 bg-white px-2 h-[32px] rounded-[7px] border border-gray-300 text-sm"
-                                      />
+    <div className="bg-white px-3 py-2 rounded-[7px] border border-gray-300 text-sm">
+      {s.reservation_type || "-"}
+    </div>
 
-                                      <div className="bg-[#0b2c6f] text-white px-4 h-[32px] flex items-center rounded-[7px] text-sm">
-                                        Extension
-                                      </div>
+    <div className="bg-[#0c2d67] text-white px-3 py-2 rounded-[7px] text-sm">
+      City
+    </div>
 
-                                      <input
-                                        value={s.extension || ""}
-                                        readOnly
-                                        className="w-[80px] bg-white px-2 h-[32px] rounded-[7px] border border-gray-300 text-sm"
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
+    <div className="bg-white px-3 py-2 rounded-[7px] border border-gray-300 text-sm">
+      {s.city || "-"}
+    </div>
+  </div>
+
+  {/* Details */}
+  {details.map((item, index) => (
+    <div key={index} className="grid grid-cols-[140px_1fr] gap-2">
+      <div className="bg-[#0b2c6f] text-white px-3 py-2 rounded-[7px] text-sm">
+        {item.label}
+      </div>
+
+      <div className="bg-white px-3 py-2 rounded-[7px] border border-gray-300 text-sm">
+        {item.value || "-"}
+      </div>
+    </div>
+  ))}
+
+  {/* Landline & Extension */}
+  <div className="grid grid-cols-[140px_1fr_120px_120px] gap-2">
+    <div className="bg-[#0b2c6f] text-white px-3 py-2 rounded-[7px] text-sm">
+      Landline
+    </div>
+
+    <div className="bg-white px-3 py-2 rounded-[7px] border border-gray-300 text-sm">
+      {s.show_phones || isSupplier
+        ? s.alternate_mobile || "-"
+        : "Hidden"}
+    </div>
+
+    <div className="bg-[#0b2c6f] text-white px-3 py-2 rounded-[7px] text-sm">
+      Extension
+    </div>
+
+    <div className="bg-white px-3 py-2 rounded-[7px] border border-gray-300 text-sm">
+      {s.extension || "-"}
+    </div>
+  </div>
+
+</div>
+    </div>
+  );
+})}
                           </div>
                         </div>
                       </div>
@@ -1420,163 +1395,113 @@ const PropertyDetails = () => {
                   </div>
                 )} */}
 
-                {activeTab === "policies" && (
-                  <div className="space-y-3">
-                    <div className="w-full bg-[#0b2c6f] rounded-[10px] py-1.5">
-                      <h2 className="text-center text-white font-semibold text-[15px]">
-                        Booking and Cancellation Policy
-                      </h2>
-                    </div>
+{activeTab === "policies" && (
+  <div className="space-y-3">
 
-                    <div className="bg-[#0c2d67] p-2 rounded-2xl">
-                      <div className="bg-[#b9d3ea] p-2 rounded-2xl">
-                        <div className="bg-[#FFE1E1] rounded-[14px] p-4 border border-[#0b2c6f]/20">
-                          {(() => {
-                            const policiesData = Array.isArray(data?.policies)
-                              ? data?.policies?.[0] || {}
-                              : data?.policies || {};
+    {/* POLICY TABLES */}
+    <div className="grid md:grid-cols-2 gap-2">
 
-                            const safeParseRows = (value: any) => {
-                              try {
-                                if (!value) return [];
-                                if (Array.isArray(value)) return value;
+      {/* BOOKING POLICY */}
+      <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#dfe8f8] min-h-[330px]">
+        <div className="grid grid-cols-[58%_42%]">
+          <div className="bg-[#31539a] text-white text-center font-bold text-xl py-4 border-r-2 border-[#16346f]">
+            Booking Policy
+          </div>
+          <div className="bg-[#31539a] text-white text-center font-bold text-xl py-4 border-r-2 border-[#16346f]">
+            Amount
+          </div>
+        </div>
 
-                                if (typeof value === "string") {
-                                  const parsed = JSON.parse(value);
-                                  return Array.isArray(parsed) ? parsed : [];
-                                }
+        <div className="grid grid-cols-[58%_42%] border-t border-r-2 border-[#16346f]">
+          <div className="p-3 border-r-2 border-[#16346f]">P.P Booking Amount</div>
+          <div className="p-3 text-green-700 font-semibold border-r-2 border-[#16346f] ">30000</div>
+        </div>
 
-                                return [];
-                              } catch {
-                                return [];
-                              }
-                            };
+        <div className="grid grid-cols-[58%_42%] border-t border-r-2 border-[#16346f]">
+          <div className="p-3 border-r-2 border-[#16346f]">30 Days Prior P.P Cost</div>
+          <div className="p-3 text-green-700 font-semibold border-r-2 border-[#16346f]">50% of the Tour Cost
+          </div>
+        </div>
 
-                            const bookingRows = safeParseRows(
-                              policiesData.booking_policy,
-                            );
-                            const cancellationRows = safeParseRows(
-                              policiesData.cancellation_policy,
-                            );
+        <div className="grid grid-cols-[58%_42%] border-t border-b-2 border-r-2 border-[#16346f]">
+  <div className="p-3 border-r-2 border-[#16346f]">
+    21 Days Prior P.P Cost
+  </div>
+  <div className="p-3 text-green-700 font-semibold border-r-2 border-[#16346f]">
+    Balance Payment to Pay
+  </div>
+</div>
+      </div>
 
-                            const bookingRemarks =
-                              policiesData.child_policy || "";
-                            const cancellationRemarks =
-                              policiesData.pet_policy || "";
+      {/* CANCELLATION POLICY */}
+      <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#dfe8f8] min-h-[330px]">
+        <div className="grid grid-cols-[58%_42%]">
+          <div className="bg-[#aa2100] text-white text-center font-bold text-xl py-4 border-r-2 border-[#16346f]">
+            Cancellation Policy
+          </div>
+          <div className="bg-[#aa2100] text-white text-center font-bold text-xl py-4 border-r-2 border-[#16346f]">
+            Charge
+          </div>
+        </div>
 
-                            return (
-                              <div className="space-y-4">
-                                {/* TABLES */}
-                                <div className="grid md:grid-cols-2 gap-2">
-                                  {/* BOOKING TABLE */}
-                                  <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#dfe8f8] min-h-[330px]">
-                                    <div className="grid grid-cols-[58%_42%] border-b border-black">
-                                      <div className="bg-[#31539a] text-white text-xl font-bold flex items-center justify-center border-r-2 border-[#16346f] h-[54px]">
-                                        Booking Policy
-                                      </div>
-                                      <div className="bg-[#31539a] text-white text-xl font-bold flex items-center justify-center h-[54px]">
-                                        Amount
-                                      </div>
-                                    </div>
+        <div className="grid grid-cols-[58%_42%] border-t border-r-2 border-[#16346f]">
+          <div className="p-3 border-r-2 border-[#16346f]">45 Days Prior Cost P.P</div>
+          <div className="p-3 text-[#9b2108] font-semibold border-r-2 border-[#16346f]">₹25,000</div>
+        </div>
 
-                                    {bookingRows.length > 0 ? (
-                                      <>
-                                        {bookingRows.map(
-                                          (row: any, index: number) => (
-                                            <div
-                                              key={index}
-                                              className="grid grid-cols-[58%_42%] border-b border-black min-h-[46px]"
-                                            >
-                                              <div className="px-3 py-2 flex items-center border-r-2 border-[#16346f] text-sm">
-                                                {row.policy || "-"}
-                                              </div>
+        <div className="grid grid-cols-[58%_42%] border-t border-r-2 border-[#16346f]">
+          <div className="p-3 border-r border-r-2 border-[#16346f]">30 Days Prior Cost P.P</div>
+          <div className="p-3 text-[#9b2108] font-semibold border-r-2 border-[#16346f]">
+            50% of the Tour Cost
+          </div>
+        </div>
 
-                                              <div className="px-3 py-2 flex items-center text-sm font-bold text-green-700">
-                                                {row.amount || "-"}
-                                              </div>
-                                            </div>
-                                          ),
-                                        )}
+        <div className="grid grid-cols-[58%_42%] border-t border-b-2 border-r-2 border-[#16346f]">
+  <div className="p-3 border-r-2 border-[#16346f]">
+    21 Days Till Departure Date Cost P.P
+  </div>
+  <div className="p-3 text-[#9b2108] font-semibold border-r-2 border-[#16346f]">
+    100% Cancellation Applies
+  </div>
+</div>
+      </div>
+    </div>
 
-                                        <div className="h-[135px] bg-[#dfe8f8]" />
-                                      </>
-                                    ) : (
-                                      <div className="p-4 text-sm text-gray-600">
-                                        No booking policy found
-                                      </div>
-                                    )}
-                                  </div>
+    {/* REMARKS */}
+<div className="grid md:grid-cols-2 gap-2 mt-4">
 
-                                  {/* CANCELLATION TABLE */}
-                                  <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#dfe8f8] min-h-[330px]">
-                                    <div className="grid grid-cols-[58%_42%] border-b border-black">
-                                      <div className="bg-[#aa2100] text-white text-xl font-bold flex items-center justify-center border-r-2 border-[#16346f] h-[54px]">
-                                        Cancellation Policy
-                                      </div>
-                                      <div className="bg-[#aa2100] text-white text-xl font-bold flex items-center justify-center h-[54px]">
-                                        Charge
-                                      </div>
-                                    </div>
+  {/* BOOKING REMARKS */}
+  <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#ffe9e9]">
+    <div className="bg-[#31539a] text-white text-lg font-bold text-center py-3">
+      Booking Policy Remarks
+    </div>
 
-                                    {cancellationRows.length > 0 ? (
-                                      <>
-                                        {cancellationRows.map(
-                                          (row: any, index: number) => (
-                                            <div
-                                              key={index}
-                                              className="grid grid-cols-[58%_42%] border-b border-black min-h-[46px]"
-                                            >
-                                              <div className="px-3 py-2 flex items-center border-r-2 border-[#16346f] text-sm">
-                                                {row.policy || "-"}
-                                              </div>
+    <div className="p-4 text-lg leading-7 text-justify h-[250px] overflow-y-auto">
+      The tour price indicated above is applicable for two passengers
+      traveling together. Any change in the number of travellers shall be
+      deemed a modification of the booking and may result in a revision of
+      the tour price. Clients are advised to contact the company at the
+      time of booking to confirm the final and accurate cost. While the
+      company endeavours to publish rates accurately.
+    </div>
+  </div>
 
-                                              <div className="px-3 py-2 flex items-center text-sm font-bold text-[#9b2108]">
-                                                {row.charge || "-"}
-                                              </div>
-                                            </div>
-                                          ),
-                                        )}
+  {/* CANCELLATION REMARKS */}
+  <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#ffe9e9]">
+    <div className="bg-[#aa2100] text-white text-lg font-bold text-center py-3">
+      Cancellation Policy Remarks
+    </div>
 
-                                        <div className="h-[135px] bg-[#dfe8f8]" />
-                                      </>
-                                    ) : (
-                                      <div className="p-4 text-sm text-gray-600">
-                                        No cancellation policy found
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
+    <div className="p-4 text-lg leading-7 text-justify h-[250px] overflow-y-auto">
+      All cancellation charges are calculated on a per-person basis for bookings with a minimum of two passengers. For bookings involving more than two passengers, cancellation charges may vary as per airline, hotel, and supplier policies, and guests are advised to confirm applicable charges before requesting cancellation. Cancellations will be processed only upon receipt of a duly completed and signed Cancellation Request Form. Cancellation policies may vary depending on the destination. All cancellation and refund requests must be submitted strictly in writing using the official Cancellation Request Form issued by our office. Submission of the form confirms the guest’s acceptance of all applicable cancellation, refund, and service charge terms. In case of no-show or late cancellation, 100% of the tour cost shall be forfeited, with no refund or credit applicable. In exceptional cases such as death or serious medical emergencies involving an immediate family member, we may assist in requesting a refund from the respective suppliers, subject to submission of valid supporting documents. Any refund or future credit is entirely subject to supplier approval, and no refund is guaranteed unless received by us from the service providers. Refunds, if applicable, will be processed after receipt from suppliers and may take one week or longer. All refunds are subject to applicable service charges, administrative fees, and non-recoverable amounts.
 
-                                {/* REMARKS */}
-                                <div className="grid md:grid-cols-2 gap-2">
-                                  <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#ffe9e9]">
-                                    <div className="bg-[#31539a] text-white text-lg font-bold flex items-center justify-center h-[48px]">
-                                      Booking Policy Remarks
-                                    </div>
+     
+    </div>
+  </div>
 
-                                    <div className="p-4 text-sm leading-6 text-justify whitespace-pre-line h-[150px] overflow-y-auto">
-                                      {bookingRemarks || "-"}
-                                    </div>
-                                  </div>
-
-                                  <div className="border-2 border-[#2f5297] rounded-xl overflow-hidden bg-[#ffe9e9]">
-                                    <div className="bg-[#aa2100] text-white text-lg font-bold flex items-center justify-center h-[48px]">
-                                      Cancellation Policy Remarks
-                                    </div>
-
-                                    <div className="p-4 text-sm leading-6 text-justify whitespace-pre-line h-[150px] overflow-y-auto">
-                                      {cancellationRemarks || "-"}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+</div>
+  </div>
+)}
 
                 {activeTab === "bank" && (
                   <div className="space-y-4">
@@ -1849,13 +1774,18 @@ const PropertyDetails = () => {
                               {/* 🔶 LEFT BIG VIEW */}
                               <div className="w-[520px] h-[420px] bg-[#d9d9d9] rounded-xl overflow-hidden border border-gray-400">
                                 {/* PHOTO */}
-                                {mediaType === "photo" && (
-                                  <img
-                                    src={`${API_URL}/uploads/${currentData[mediaIndex]?.image_path}`}
-                                    className="w-full h-full object-cover"
-                                  />
-                                )}
+                                
+{mediaType === "photo" && (
+  <>
+    {console.log("Current Image:", currentData?.[mediaIndex])}
 
+    <img
+      src={`${API_URL}/${currentData?.[mediaIndex]?.image_path}`}
+      className="w-full h-full object-cover"
+      alt="Property"
+    />
+  </>
+)}
                                 {/* VIDEO */}
                                 {mediaType === "video" &&
                                   (currentData[mediaIndex]?.video_url ? (
@@ -1892,11 +1822,18 @@ const PropertyDetails = () => {
                                   >
                                     {/* PHOTO */}
                                     {mediaType === "photo" && (
-                                      <img
-                                        src={`${API_URL}/uploads/${item.image_path}`}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    )}
+  <img
+    src={`${API_URL}/${item.image_path.replace(/\s/g, "")}`}
+    className="w-full h-full object-cover"
+    alt="Property"
+    onError={(e) => {
+      console.log(
+        "Failed Image:",
+        `${API_URL}/${item.image_path.replace(/\s/g, "")}`
+      );
+    }}
+  />
+)}
 
                                     {/* VIDEO */}
                                     {mediaType === "video" &&
