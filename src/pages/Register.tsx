@@ -378,7 +378,7 @@ const payload = {
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   mobile: /^\d{10}$/,
     city: /^[a-zA-Z\s]{2,50}$/,
-    pincode: /^\d{6}$/,
+    pincode: /^[A-Za-z0-9\s-]{3,12}$/,
     country: /^[a-zA-Z\s]{2,50}$/,
     gst: /^[0-9A-Z]{15}$/,
   };
@@ -410,9 +410,16 @@ const payload = {
       break;
 
     case "pincode":
-      if (!regexPatterns.pincode.test(v))
-        return "Pincode must be 6 digits";
-      break;
+    if (form.country.trim().toLowerCase() === "india") {
+      if (!/^\d{6}$/.test(v)) {
+        return "Indian PIN code must be exactly 6 digits";
+      }
+    } else {
+      if (!/^[A-Za-z0-9\s-]{3,12}$/.test(v)) {
+        return "Enter a valid postal code";
+      }
+    }
+    break;
 
     case "country":
       if (!regexPatterns.country.test(v))
@@ -762,7 +769,13 @@ const payload = {
       className={inputClass}
         
       value={form.pincode}
-      onChange={(e) => handleChange("pincode", e.target.value)}
+    maxLength={12}
+    placeholder={
+        form.country?.toLowerCase() === "india"
+            ? "Enter 6-digit PIN Code"
+            : "Enter Postal Code"
+    }
+    onChange={(e) => handleChange("pincode", e.target.value.toUpperCase())}
     />
     {errors.pincode && (
       <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>
