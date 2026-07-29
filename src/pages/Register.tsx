@@ -24,7 +24,12 @@ const [form, setForm] = useState({
   contactPerson: "",
 
   emails: [""],
-  mobiles: [""],
+  mobiles: [
+    {
+      countryCode: "+91",
+      number: "",
+    },
+  ],
 
   area: "",
   landmark: "",
@@ -44,7 +49,13 @@ const [form, setForm] = useState({
 const addMobile = () => {
   setForm((prev) => ({
     ...prev,
-    mobiles: [...prev.mobiles, ""],
+    mobiles: [
+      ...prev.mobiles,
+      {
+        countryCode: "+91",
+        number: "",
+      },
+    ],
   }));
 };
 
@@ -58,9 +69,13 @@ const removeMobile = (index: number) => {
   }));
 };
 
-const updateMobile = (index: number, value: string) => {
+const updateMobile = (
+  index: number,
+  field: "countryCode" | "number",
+  value: string
+) => {
   const updated = [...form.mobiles];
-  updated[index] = value;
+  updated[index][field] = value;
 
   setForm((prev) => ({
     ...prev,
@@ -206,7 +221,7 @@ if (!form.companyName.trim()) {
 }
 
 
-if (!form.mobiles[0]?.trim()) {
+if (!form.mobiles[0]?.number.trim()) {
   newErrors.mobile_0 = "Mobile is required";
 }
 
@@ -239,17 +254,21 @@ Object.keys(form).forEach((field) => {
 
 
 form.mobiles.forEach((mob, index) => {
+  if (!mob.number.trim()) return;
 
- if (!mob.trim()) return;
-
-  if (!regexPatterns.mobile.test(mob)) {
+  if (!regexPatterns.mobile.test(mob.number)) {
     newErrors[`mobile_${index}`] = "Mobile must be 10 digits";
   }
 
-  if (form.mobiles.indexOf(mob) !== index) {
+  if (
+    form.mobiles.findIndex(
+      (m) =>
+        m.countryCode === mob.countryCode &&
+        m.number === mob.number
+    ) !== index
+  ) {
     newErrors[`mobile_${index}`] = "Duplicate mobile number";
   }
-
 });
 form.emails.forEach((email, index) => {
 
@@ -271,7 +290,7 @@ toast.error(firstErrorMessage);
       return; // 🚫 stop API call
     }
 
-const cleanedMobiles = form.mobiles.filter(m => m.trim() !== "");
+
 
 const payload = {
   role,
@@ -279,7 +298,12 @@ const payload = {
   contact_person: form.contactPerson,
 
   emails: form.emails.filter(e => e.trim() !== ""),
-  mobiles: cleanedMobiles,
+ mobiles: form.mobiles
+  .filter((m) => m.number.trim() !== "")
+  .map((m) => ({
+    country_code: m.countryCode,
+    mobile: m.number,
+  })),
 
   area: form.area,
   landmark: form.landmark,
@@ -409,16 +433,7 @@ const payload = {
         return "Invalid city";
       break;
 
-    case "pincode":
-    if (form.country.trim().toLowerCase() === "india") {
-      if (!/^\d{6}$/.test(v)) {
-        return "Indian PIN code must be exactly 6 digits";
-      }
-    } else {
-      if (!/^[A-Za-z0-9\s-]{3,12}$/.test(v)) {
-        return "Enter a valid postal code";
-      }
-    }
+ case "pincode":
     break;
 
     case "country":
@@ -578,55 +593,67 @@ const payload = {
     Mobile Number
   </Label>
 
-  {form.mobiles.map((mob, index) => (
-    <div key={index}>
+{form.mobiles.map((mob, index) => (
+  <div key={index} className="mt-1">
 
-      <div className="flex gap-2 items-center mt-1">
+    <div className="flex items-center gap-2">
 
-        <Input
-          value={mob}
-          maxLength={10}
-          type="tel"
-          className={`${inputClass} ${
-            errors[`mobile_${index}`] ? "border-red-500" : ""
-          }`}
-          onChange={(e) =>
-            updateMobile(index, e.target.value.replace(/\D/g, ""))
-          }
-        />
+      {/* Country Code */}
+     <Input
+  className={`${inputClass} w-16`}
+  placeholder="+91"
+  value={mob.countryCode}
+  onChange={(e) =>
+    updateMobile(index, "countryCode", e.target.value)
+  }
+/>
 
-        {/* ADD ICON */}
-        {index === form.mobiles.length - 1 && (
-          <button
-            type="button"
-            onClick={addMobile}
-            className="p-2 rounded-lg bg-green-500 hover:bg-green-600 text-white"
-          >
-            +
-          </button>
-        )}
+      {/* Mobile Number */}
+      <Input
+        className={`flex-1 ${inputClass} ${
+          errors[`mobile_${index}`] ? "border-red-500" : ""
+        }`}
+        value={mob.number}
+        maxLength={15}
+        type="tel"
+        placeholder="Mobile Number"
+        onChange={(e) =>
+          updateMobile(
+            index,
+            "number",
+            e.target.value.replace(/\D/g, "")
+          )
+        }
+      />
 
-        {/* REMOVE ICON */}
-        {form.mobiles.length > 1 && (
-          <button
-            type="button"
-            onClick={() => removeMobile(index)}
-            className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white"
-          >
-            -
-          </button>
-        )}
-
-      </div>
-
-      {errors[`mobile_${index}`] && (
-        <p className="text-red-500 text-sm mt-1">
-          {errors[`mobile_${index}`]}
-        </p>
+      {index === form.mobiles.length - 1 && (
+        <button
+          type="button"
+          onClick={addMobile}
+          className="p-2 rounded-lg bg-green-500 text-white"
+        >
+          +
+        </button>
       )}
 
+      {form.mobiles.length > 1 && (
+        <button
+          type="button"
+          onClick={() => removeMobile(index)}
+          className="p-2 rounded-lg bg-red-500 text-white"
+        >
+          -
+        </button>
+      )}
     </div>
-  ))}
+
+    {errors[`mobile_${index}`] && (
+      <p className="text-red-500 text-sm mt-1">
+        {errors[`mobile_${index}`]}
+      </p>
+    )}
+  </div>
+))}
 </div>
       </div>
 
