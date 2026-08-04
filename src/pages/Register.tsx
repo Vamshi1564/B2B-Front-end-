@@ -217,7 +217,7 @@ localStorage.setItem("register_role", role);
     const newErrors: any = {};
 // 🔴 REQUIRED FIELDS
 if (!form.companyName.trim()) {
-  newErrors.companyName = "Agent/Property Name is required";
+  newErrors.companyName = role === "agent" ? "Agent name is required" : "Supplier name is required";
 }
 
 
@@ -237,49 +237,14 @@ if (role === "supplier" && !form.supplierType) {
     //   if (message) newErrors[field] = message;
     // });
 
-Object.keys(form).forEach((field) => {
-  const value = (form as any)[field];
-
-  // ✅ Skip arrays (emails, mobiles)
-  if (Array.isArray(value)) return;
-
-  // ✅ Skip empty fields (NO REQUIRED VALIDATION)
-  if (!value || !value.toString().trim()) return;
-
-  const message = validateField(field, value);
-
-  if (message) newErrors[field] = message;
-});
-
-
-
-form.mobiles.forEach((mob, index) => {
-  if (!mob.number.trim()) return;
-
-  if (!regexPatterns.mobile.test(mob.number)) {
-    newErrors[`mobile_${index}`] = "Mobile must be 10 digits";
-  }
-
-  if (
-    form.mobiles.findIndex(
-      (m) =>
-        m.countryCode === mob.countryCode &&
-        m.number === mob.number
-    ) !== index
-  ) {
-    newErrors[`mobile_${index}`] = "Duplicate mobile number";
-  }
-});
-form.emails.forEach((email, index) => {
-
-  // Only first email required
-if (!email.trim()) return;
-
-  if (!regexPatterns.email.test(email)) {
-    newErrors[`email_${index}`] = "Invalid email format";
-  }
-
-});
+// Only the required primary mobile number is format-checked. All other
+// registration fields, including additional mobile and email entries, are optional.
+if (
+  form.mobiles[0]?.number.trim() &&
+  !/^\d{10}$/.test(form.mobiles[0].number)
+) {
+  newErrors.mobile_0 = "Mobile must be 10 digits";
+}
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
@@ -346,9 +311,7 @@ const payload = {
               return;
             }
 
-            toast.success(
-              "Registration successful! Once admin approves your account, login credentials will be sent to your registered email.",
-            );
+    toast.success("Registration submitted for admin approval.");
 
             navigate("/login");
           },
@@ -369,9 +332,7 @@ const payload = {
   return;
 }
 
-    toast.success(
-      "Registration successful! Once admin approves your account, login credentials will be sent to your registered email.",
-    );
+    toast.success("Registration submitted for admin approval.");
 
     navigate("/login");
   };
@@ -396,60 +357,6 @@ const payload = {
   const selectClass =
     "w-full h-11 px-3 rounded-xl border border-black text-black focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary";
 
-  const regexPatterns = {
-  companyName: /^[a-zA-Z0-9\s&\-.,]{2,100}$/,
-  name: /^[a-zA-Z\s]{2,50}$/,
-  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  mobile: /^\d{10}$/,
-    city: /^[a-zA-Z\s]{2,50}$/,
-    pincode: /^[A-Za-z0-9\s-]{3,12}$/,
-    country: /^[a-zA-Z\s]{2,50}$/,
-    gst: /^[0-9A-Z]{15}$/,
-  };
-
-
- const validateField = (field: string, value: any) => {
-  if (!value) return "";
-  if (Array.isArray(value)) return "";
-
-  const v = value.toString().trim();
-
-  if (!v) return ""; // ✅ no required validation
-
-  switch (field) {
-    case "companyName":
-      if (!regexPatterns.companyName.test(v))
-        return "Invalid company name";
-      break;
-
-    // case "firstName":
-    // case "lastName":
-    //   if (!regexPatterns.name.test(v))
-    //     return "Only letters allowed";
-    //   break;
-
-    case "city":
-      if (!regexPatterns.city.test(v))
-        return "Invalid city";
-      break;
-
- case "pincode":
-    break;
-
-    case "country":
-      if (!regexPatterns.country.test(v))
-        return "Invalid country";
-      break;
-
-    case "gstNumber":
-      if (form.gstApplicable === "yes" && !regexPatterns.gst.test(v))
-        return "Invalid GST";
-      break;
-  }
-
-  return "";
-};
-
   return (
     
     <form onSubmit={handleSubmit} className="space-y-6 pt-6">
@@ -461,7 +368,7 @@ const payload = {
 
   {/* PROPERTY NAME (BIG) */}
   <div className="col-span-2">
-    <Label className="text-white">Property Name</Label>
+    <Label className="text-white">Supplier Name</Label>
     <Input
       className={inputClass}
       value={form.companyName}
@@ -498,7 +405,7 @@ const payload = {
 
     {/* TRAVEL AGENCY NAME (BIG) */}
     <div className="col-span-2">
-      <Label className="text-white">Travel Agency Name</Label>
+      <Label className="text-white">Agent Name</Label>
       <Input
         className={inputClass}
         value={form.companyName}
@@ -547,7 +454,7 @@ const payload = {
     <div className="flex items-center gap-2">
 
       <Input
-        type="email"
+        type="text"
         className={`${inputClass} ${
           errors[`email_${index}`] ? "border-red-500" : ""
         }`}
@@ -731,12 +638,6 @@ const payload = {
               className={`${inputClass} flex-1 ${
                 form.gstApplicable === "no"
                   ? "bg-gray-100 cursor-not-allowed"
-                  : ""
-              } ${
-                submitted &&
-                form.gstApplicable === "yes" &&
-                !form.gstNumber.trim()
-                  ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                   : ""
               }`}
               value={form.gstNumber}
