@@ -241,11 +241,10 @@ if (role === "supplier" && !form.supplierType) {
 // registration fields, including additional mobile and email entries, are optional.
 if (
   form.mobiles[0]?.number.trim() &&
-  !/^\d{10}$/.test(form.mobiles[0].number)
+  !/^\d{4,15}$/.test(form.mobiles[0].number)
 ) {
-  newErrors.mobile_0 = "Mobile must be 10 digits";
+  newErrors.mobile_0 = "Enter a valid mobile number";
 }
-    setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
       const firstErrorKey = Object.keys(newErrors)[0];
@@ -570,20 +569,21 @@ const payload = {
             <Label className="text-white">Supplier Type</Label>
 
             <div className="grid sm:grid-cols-1 gap-3">
-              <select
-                className={inputClass}
-                value={form.supplierType}
-                onChange={(e) => handleChange("supplierType", e.target.value)}
-                
-              >
-                <option value="">Select supplier type</option>
+             <select
+  className={inputClass}
+  value={form.supplierType}
+  onChange={(e) => handleChange("supplierType", e.target.value)}
+>
+  <option value="">Select supplier type</option>
 
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.category_name}>
-                    {cat.category_name}
-                  </option>
-                ))}
-              </select>
+  {[...categories]
+    .sort((a, b) => a.category_name.localeCompare(b.category_name))
+    .map((cat) => (
+      <option key={cat.id} value={cat.category_name}>
+        {cat.category_name}
+      </option>
+    ))}
+</select>
 
               {form.supplierType === "Others" && (
                 <Input
